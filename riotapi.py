@@ -3,18 +3,20 @@ import json
     
 server = "na1.api.riotgames.com"
 region = "https://americas.api.riotgames.com"
-apikey = "RGAPI-16d253e5-f549-46d6-b345-a38f26e0ef11"
 matchhistoryapi = "/lol/match/v5/matches/by-puuid/{puuid}/ids"
-puuid = "VZGeiLRo-jnyT4qa3eSNM39hdOr6wyV7AxCHkHE66ocileMfKBtMSQznhFHpU_jmqNYeUWEq-mORiQ"
-matchv5url = region + matchhistoryapi.format(puuid=puuid) + "?api_key=" + apikey
 
 
 #matchhistoryrequest = requests.get(matchv5url)
 #matchhistory = matchhistoryrequest.json()
 
 class riot:
+    apikey = ""
 
-    def regioncheck(region):
+    def __init__(self,apikey):
+        self.apikey = apikey
+        print(self.apikey)
+
+    def regioncheck(self,region):
         match region:
             case "BR1":
                 region = "br1.api.riotgames.com"
@@ -30,7 +32,7 @@ class riot:
                 region = "la1.api.riotgames.com"
             case "LA2":
                 region = "la2.api.riotgames.com"
-            case "NA1":
+            case "NA":
                 region = "na1.api.riotgames.com"
             case "OC1":
                 region = "oc1.api.riotgames.com"
@@ -41,18 +43,13 @@ class riot:
         return region
 
 
-    def jprint(obj):
-        # create a formatted string of the Python JSON object
-        text = json.dumps(obj, sort_apikeys=True, indent=4)
-        print(text)
 
 
-    def getIDjson(apikey,server,name="Symphony"):
-        apicall = "https://{0}/lol/summoner/v4/summoners/by-name/{1}?api_key={2}".format(server,name,apikey)
+    def getIDjson(self,region,name="Symphony"):
+        server = self.regioncheck(region)
+        apicall = "https://{0}/lol/summoner/v4/summoners/by-name/{1}?api_key={2}".format(server,name,self.apikey)
+        print(apicall)
         request = requests.get(apicall)
         return request.json()
 
-    def __init__(self,apikey):
-        self.apikey = apikey
-        self.region = self.regioncheck(region)
                 
