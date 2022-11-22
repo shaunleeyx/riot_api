@@ -90,8 +90,6 @@ class riot:
         for player in players:
             if(player["win"]): winningteam.append(player["championName"])
             else: losingteam.append(player["championName"])
-        print("winningteam\n",winningteam)
-        print("losingteam\n",losingteam)
         return losingteam,winningteam
     
     
