@@ -7,19 +7,7 @@ def jprint(obj):
     print(text)
 
 key = "RGAPI-9996d7fa-7314-4105-8bd2-08aad782a578"
-obj = riot(key)
-jsonobj = obj.getIDjson("NA")
-jprint(jsonobj)
-
-
-
-
-
-
-
-
-
-
-
-
-
+summonername = "Symphony"
+region = "NA"
+obj = riot(summonername,region,key)
+match = (obj.getmatchData("NA1_4497705376"))
