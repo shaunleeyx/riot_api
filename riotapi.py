@@ -82,7 +82,7 @@ class riot:
         request = requests.get(apicall)
         return request.json()
 
-    def getMLdata(self,match):
+    def getMLData(self,match):
         info = match["info"]
         players = info["participants"]
         losingteam = []
@@ -92,6 +92,7 @@ class riot:
             else: losingteam.append(player["championName"])
         print("winningteam\n",winningteam)
         print("losingteam\n",losingteam)
+        return losingteam,winningteam
     
     
 
