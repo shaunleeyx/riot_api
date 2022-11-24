@@ -88,9 +88,9 @@ class riot:
         losingteam = []
         winningteam = []
         for player in players:
-            if(player["win"]): winningteam.append(player["championName"])
-            else: losingteam.append(player["championName"])
-        return losingteam,winningteam
+            winningteam.append(player["championName"]) if (player["win"]) else losingteam.append(player["championName"])
+        combined = losingteam + winningteam
+        return combined
     
     
 
@@ -115,4 +115,3 @@ class riot:
         self.puuid = playerdata["puuid"]
         self.platform = platform
         self.platformhost = self.platformcheck(platform)
-        print("self.id:",self.id,"\n self.accountID",self.accountID,"\nself.puuid",self.puuid)
