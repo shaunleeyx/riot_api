@@ -79,7 +79,7 @@ class riot:
     def getmatchData(self,matchid):
         region = self.getRegion(self.platform)
         apicall = "https://{0}/lol/match/v5/matches/{1}?api_key={2}".format(region,matchid,self.apikey)    
-        print(apicall)
+        #print(apicall)
         request = requests.get(apicall)
         return request.json()
 

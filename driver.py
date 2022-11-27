@@ -6,7 +6,7 @@ import os.path
 
 
 key = "RGAPI-359a2eee-b991-4bf8-b906-3ef73ddd5d25"
-summonername = "Symphony"
+summonername = "Dyrus"
 region = "NA"
 obj = riot(summonername,region,key)
 matchesid = obj.matchhistoryids()
@@ -28,6 +28,7 @@ with open('data.csv','a',newline = '') as f,open('savefile','wb') as dbfile: #"r
         match = obj.getmatchData(matchid)
         gameMode = match["info"]["gameMode"]
         if (gameMode != "ARAM" or (matchid in matchidlist)): continue
+        print(matchid)
         matchidlist.append(matchid)
         combined = (obj.getMLData(match))
         writer.writerow(combined)
