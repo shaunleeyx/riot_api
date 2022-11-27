@@ -79,18 +79,23 @@ class riot:
     def getmatchData(self,matchid):
         region = self.getRegion(self.platform)
         apicall = "https://{0}/lol/match/v5/matches/{1}?api_key={2}".format(region,matchid,self.apikey)    
+        print(apicall)
         request = requests.get(apicall)
         return request.json()
 
     def getMLData(self,match):
         info = match["info"]
         players = info["participants"]
-        losingteam = []
-        winningteam = []
+        teams = info["teams"]
+        team1 = teams[1]
+        teamwin = "1" if (team1["win"]) else "0"
+        print(teamwin)
+        row = []
+
         for player in players:
-            winningteam.append(player["championName"]) if (player["win"]) else losingteam.append(player["championName"])
-        combined = losingteam + winningteam
-        return combined
+            row.append(player["championName"])
+        row.append(teamwin)
+        return row
     
     
 
