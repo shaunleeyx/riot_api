@@ -5,11 +5,6 @@ import pickle
 import os.path
 
 
-def jprint(obj):
-    # create a formatted string of the Python JSON object
-    text = json.dumps(obj, indent=4)
-    print(text)
-
 key = "RGAPI-359a2eee-b991-4bf8-b906-3ef73ddd5d25"
 summonername = "Symphony"
 region = "NA"
@@ -29,14 +24,12 @@ matchidlist = pickle.load(open('savefile', 'rb')) if(os.path.exists(path_to_file
 with open('data.csv','a',newline = '') as f,open('savefile','wb') as dbfile: #"r" represents the read mode
     writer = csv.writer(f)
     for matchid in matchesid:
-        print(matchid)
+        #print(matchid)
         match = obj.getmatchData(matchid)
         gameMode = match["info"]["gameMode"]
         if (gameMode != "ARAM" or (matchid in matchidlist)): continue
         matchidlist.append(matchid)
         combined = (obj.getMLData(match))
-#        combined.append(matchid)
-#        print(combined)
         writer.writerow(combined)
     pickle.dump(matchidlist,dbfile)
     f.close()

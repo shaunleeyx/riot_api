@@ -89,9 +89,7 @@ class riot:
         teams = info["teams"]
         team1 = teams[1]
         teamwin = "1" if (team1["win"]) else "0"
-        print(teamwin)
         row = []
-
         for player in players:
             row.append(player["championName"])
         row.append(teamwin)
