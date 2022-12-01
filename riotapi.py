@@ -1,5 +1,6 @@
 import requests
 import json
+from ratelimit import limits, sleep_and_retry,RateLimitException
     
 #server = "na1.api.riotgames.com"
 #region = "https://americas.api.riotgames.com"
@@ -7,6 +8,9 @@ import json
 #matchhistory = matchhistoryrequest.json()
 
 class riot:
+    TIME_PERIOD = 120  # time period in seconds
+    MAX_CALLS_PER_TIME_PERIOD = 100
+
     apikey = ""
     id = ""
     accountID = ""
@@ -70,12 +74,16 @@ class riot:
                 platform = "ru.api.riotgames.com"
         return platform
 
+    @sleep_and_retry
+    @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def matchhistoryids(self):
         region = self.getRegion(self.platform)
         apicall = "https://{0}/lol/match/v5/matches/by-puuid/{1}/ids?api_key={2}".format(region,self.puuid,self.apikey)
         request = requests.get(apicall)
         return request.json()
 
+    @sleep_and_retry
+    @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def getmatchData(self,matchid):
         region = self.getRegion(self.platform)
         apicall = "https://{0}/lol/match/v5/matches/{1}?api_key={2}".format(region,matchid,self.apikey)    
@@ -95,9 +103,9 @@ class riot:
         row.append(teamwin)
         return row
     
-    
-
-    def getIDjson(self,platform,name="Symphony"):
+    @sleep_and_retry
+    @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
+    def getIDjson(self,platform,name="SofaKingEasy"):
         server = self.platformcheck(platform)
         apicall = "https://{0}/lol/summoner/v4/summoners/by-name/{1}?api_key={2}".format(server,name,self.apikey)
         request = requests.get(apicall)

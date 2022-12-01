@@ -5,8 +5,8 @@ import pickle
 import os.path
 
 
-key = "RGAPI-359a2eee-b991-4bf8-b906-3ef73ddd5d25"
-summonername = "Dyrus"
+key = "RGAPI-ad96ef91-3ca4-4be0-893e-5904bde5343f"
+summonername = input("Enter your summonername: ")
 region = "NA"
 obj = riot(summonername,region,key)
 matchesid = obj.matchhistoryids()
@@ -21,21 +21,29 @@ matchesid = obj.matchhistoryids()
 
 path_to_file = "savefile"
 matchidlist = pickle.load(open('savefile', 'rb')) if(os.path.exists(path_to_file)) else []    
-with open('data.csv','a',newline = '') as f,open('savefile','wb') as dbfile: #"r" represents the read mode
-    writer = csv.writer(f)
-    for matchid in matchesid:
-        #print(matchid)
-        match = obj.getmatchData(matchid)
-        gameMode = match["info"]["gameMode"]
-        if (gameMode != "ARAM" or (matchid in matchidlist)): continue
-        print(matchid)
-        matchidlist.append(matchid)
-        combined = (obj.getMLData(match))
-        writer.writerow(combined)
-    pickle.dump(matchidlist,dbfile)
-    f.close()
-    dbfile.close()
+try:
+    with open('data.csv','a',newline = '') as f,open('savefile','wb') as dbfile: #"r" represents the read mode
+        writer = csv.writer(f)
+        for matchid in matchesid:
+            #print(matchid)
+            match = obj.getmatchData(matchid)
+            if('info' not in match):
+                print(match)
+                continue
+            #if(not match["info"]): continue
+            gameMode = match["info"]["gameMode"]
+            if (gameMode != "ARAM" or (matchid in matchidlist)): continue
+            print(matchid)
+            matchidlist.append(matchid)
+            combined = (obj.getMLData(match))
+            writer.writerow(combined)
+        pickle.dump(matchidlist,dbfile)
+        f.close()
+        dbfile.close()
 
+except:
+        pickle.dump(matchidlist,dbfile)
+    
         
         
 
