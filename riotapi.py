@@ -40,6 +40,8 @@ class riot:
                 platform = AMERICAS
             case "NA":
                 platform = AMERICAS
+            case "NA1":
+                platform = AMERICAS
             case "OC1":
                 platform = SEA
             case "TR1":
@@ -78,6 +80,7 @@ class riot:
     @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def matchhistoryids(self):
         region = self.getRegion(self.platform)
+        #apicall = "https://{0}/lol/match/v5/matches/by-puuid/{1}/ids?api_key={2}".format(region,self.puuid,self.apikey)
         apicall = "https://{0}/lol/match/v5/matches/by-puuid/{1}/ids?api_key={2}".format(region,self.puuid,self.apikey)
         request = requests.get(apicall)
         return request.json()
@@ -86,6 +89,7 @@ class riot:
     @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def getmatchData(self,matchid):
         region = self.getRegion(self.platform)
+
         apicall = "https://{0}/lol/match/v5/matches/{1}?api_key={2}".format(region,matchid,self.apikey)    
         #print(apicall)
         request = requests.get(apicall)
@@ -105,24 +109,27 @@ class riot:
     
     @sleep_and_retry
     @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
-    def getIDjson(self,platform,name="SofaKingEasy"):
-        server = self.platformcheck(platform)
-        apicall = "https://{0}/lol/summoner/v4/summoners/by-name/{1}?api_key={2}".format(server,name,self.apikey)
+
+#The whole point of this is to 
+    def getPuuid(self,platform,name="Symphony",tagline="NA1"):
+        server = self.getRegion(platform)
+        print(server)
+        apicall = "https://{0}/riot/account/v1/accounts/by-riot-id/{1}/{2}?api_key={3}".format(server,name,tagline,self.apikey)
+        print("apicall",apicall)
         request = requests.get(apicall)
         return request.json()
 
                 
     def changePlayer(self,platform,summonername):
-        playerdata = self.getIDjson(platform,summonername)
+        playerdata = self.getPuuid(platform,summonername)
         self.id = playerdata["id"]
         self.accountID = playerdata["accountId"]
         self.puuid = playerdata["puuid"]
 
-    def __init__(self,summonername,platform,apikey):
+    def __init__(self,summonername,platform,apikey,tagline):
         self.apikey = apikey
-        playerdata = self.getIDjson(platform,summonername)
-        self.id = playerdata["id"]
-        self.accountID = playerdata["accountId"]
+        playerdata = self.getPuuid(platform,summonername,tagline)
         self.puuid = playerdata["puuid"]
+        print(self.puuid)
         self.platform = platform
         self.platformhost = self.platformcheck(platform)
