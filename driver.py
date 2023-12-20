@@ -5,7 +5,7 @@ import pickle
 import os.path
 
 
-key = "RGAPI-31422c97-498c-4f82-88ac-4a4eef20dbaa"
+key = "RGAPI-8087c96b-ce7b-475f-aa66-0dab36855c35"
 summonername = input("Enter your summonername: ")
 hashtagindex = summonername.find('#')
 gamename = summonername[0:hashtagindex]
@@ -40,7 +40,8 @@ try:
             if (gameMode != "ARAM" or (matchid in matchidlist)): continue
             print(matchid)
             matchidlist.append(matchid)
-            combined = (obj.getMLData(match))
+            combined , list = (obj.getMLData(match))
+            print(list)
             writer.writerow(combined)
         print(dbfile)
         pickle.dump(matchidlist,dbfile)

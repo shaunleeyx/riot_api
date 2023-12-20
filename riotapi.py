@@ -101,11 +101,13 @@ class riot:
         teams = info["teams"]
         team1 = teams[1]
         teamwin = "1" if (team1["win"]) else "0"
+        puuid = []
         row = []
         for player in players:
             row.append(player["championName"])
+            puuid.append(player["puuid"])
         row.append(teamwin)
-        return row
+        return row , puuid
     
     @sleep_and_retry
     @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
@@ -113,9 +115,7 @@ class riot:
 #The whole point of this is to 
     def getPuuid(self,platform,name="Symphony",tagline="NA1"):
         server = self.getRegion(platform)
-        print(server)
         apicall = "https://{0}/riot/account/v1/accounts/by-riot-id/{1}/{2}?api_key={3}".format(server,name,tagline,self.apikey)
-        print("apicall",apicall)
         request = requests.get(apicall)
         return request.json()
 
@@ -130,6 +130,5 @@ class riot:
         self.apikey = apikey
         playerdata = self.getPuuid(platform,summonername,tagline)
         self.puuid = playerdata["puuid"]
-        print(self.puuid)
         self.platform = platform
         self.platformhost = self.platformcheck(platform)
