@@ -5,7 +5,7 @@ import pickle
 import os.path
 
 
-key = "RGAPI-8087c96b-ce7b-475f-aa66-0dab36855c35"
+key = "RGAPI-b82a4a85-4016-4b76-869f-a0b8f2bd4cb1"
 summonername = input("Enter your summonername: ")
 hashtagindex = summonername.find('#')
 gamename = summonername[0:hashtagindex]
@@ -30,7 +30,6 @@ try:
     with open('data.csv','a',newline = "") as f,open('savefile','wb') as dbfile: #"r" represents the read mode
         writer = csv.writer(f, delimiter=',')
         for matchid in matchesid:
-            #print(matchid)
             match = obj.getmatchData(matchid)
             if('info' not in match):
                 print(match)
@@ -41,8 +40,22 @@ try:
             print(matchid)
             matchidlist.append(matchid)
             combined , list = (obj.getMLData(match))
-            print(list)
             writer.writerow(combined)
+
+            for puuid in list:
+                matchesid = obj.matchhistoryids(puuid)
+                for matchid in matchesid:
+                    match = obj.getmatchData(matchid)
+                    if('info' not in match):
+                        print(match)
+                        continue
+                    #if(not match["info"]): continue
+                    gameMode = match["info"]["gameMode"]
+                    if (gameMode != "ARAM" or (matchid in matchidlist)): continue
+                    print(matchid)
+                    matchidlist.append(matchid)
+                    combined , list = (obj.getMLData(match))
+                    writer.writerow(combined)
         print(dbfile)
         pickle.dump(matchidlist,dbfile)
         f.close()
