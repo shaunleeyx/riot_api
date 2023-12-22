@@ -14,7 +14,7 @@ gamename = summonername[0:hashtagindex]
 tagline = summonername[hashtagindex+1:len(summonername)]
 region = "NA"
 obj = riot(gamename,region,key,tagline)
-matchesid = obj.matchhistoryids()
+matchesid = obj.matchhistoryids(obj.puuid)
 delay = 0
 
 
@@ -28,6 +28,7 @@ if(not(os.path.exists("data.csv"))):
 
 path_to_file = "savefile"
 matchidlist = pickle.load(open('savefile', 'rb')) if(os.path.exists(path_to_file)) else []    
+print(matchidlist)
 try:
     with open('data.csv','a',newline = "") as f,open('savefile','wb') as dbfile: #"r" represents the read mode
         writer = csv.writer(f, delimiter=',')
@@ -40,14 +41,13 @@ try:
             #if(not match["info"]): continue
             gameMode = match["info"]["gameMode"]
             if (gameMode != "ARAM" or (matchid in matchidlist)): continue
-            print("asdasd   ",matchid)
+            print("matchid1:",matchid)
             matchidlist.append(matchid)
             combined , list = (obj.getMLData(match))
             writer.writerow(combined)
-            print("list",list)
             for puuid in list:
                 print("puuid in driver:",puuid)
-                matchesid2 = obj.matchhistoryids(puuid)
+                matchesid = obj.matchhistoryids(puuid)
                 for matchid in matchesid:
                     match = obj.getmatchData(matchid)
                     if('info' not in match):
@@ -55,6 +55,7 @@ try:
                     #if(not match["info"]): continue
                     gameMode = match["info"]["gameMode"]
                     if (gameMode != "ARAM" or (matchid in matchidlist)): continue
+                    print("matchid2:",matchid)
                     matchidlist.append(matchid)
                     combined , list = (obj.getMLData(match))
                     writer.writerow(combined)

@@ -78,8 +78,7 @@ class riot:
 
     @sleep_and_retry
     @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
-    def matchhistoryids(self,puuid = None):
-        puuid = self.puuid
+    def matchhistoryids(self,puuid):
         print("puuid in class:",puuid)
         region = self.getRegion(self.platform)
         #apicall = "https://{0}/lol/match/v5/matches/by-puuid/{1}/ids?api_key={2}".format(region,self.puuid,self.apikey)
