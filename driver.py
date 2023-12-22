@@ -3,9 +3,11 @@ from riotapi import riot
 import csv
 import pickle
 import os.path
+import time
 
 
-key = "RGAPI-b82a4a85-4016-4b76-869f-a0b8f2bd4cb1"
+
+key = "RGAPI-edc3fa83-9534-4882-9439-c5ab5ac8395e"
 summonername = input("Enter your summonername: ")
 hashtagindex = summonername.find('#')
 gamename = summonername[0:hashtagindex]
@@ -13,6 +15,7 @@ tagline = summonername[hashtagindex+1:len(summonername)]
 region = "NA"
 obj = riot(gamename,region,key,tagline)
 matchesid = obj.matchhistoryids()
+delay = 0
 
 
 #if there is no data.csv then make a new one with columns initiated
@@ -25,37 +28,38 @@ if(not(os.path.exists("data.csv"))):
 
 path_to_file = "savefile"
 matchidlist = pickle.load(open('savefile', 'rb')) if(os.path.exists(path_to_file)) else []    
-print(matchidlist)
 try:
     with open('data.csv','a',newline = "") as f,open('savefile','wb') as dbfile: #"r" represents the read mode
         writer = csv.writer(f, delimiter=',')
         for matchid in matchesid:
+            #time.sleep(30)
             match = obj.getmatchData(matchid)
             if('info' not in match):
-                print(match)
+                print("info:",match)
                 continue
             #if(not match["info"]): continue
             gameMode = match["info"]["gameMode"]
             if (gameMode != "ARAM" or (matchid in matchidlist)): continue
-            print(matchid)
+            print("asdasd   ",matchid)
             matchidlist.append(matchid)
             combined , list = (obj.getMLData(match))
             writer.writerow(combined)
-
+            print("list",list)
             for puuid in list:
-                matchesid = obj.matchhistoryids(puuid)
+                print("puuid in driver:",puuid)
+                matchesid2 = obj.matchhistoryids(puuid)
                 for matchid in matchesid:
                     match = obj.getmatchData(matchid)
                     if('info' not in match):
-                        print(match)
                         continue
                     #if(not match["info"]): continue
                     gameMode = match["info"]["gameMode"]
                     if (gameMode != "ARAM" or (matchid in matchidlist)): continue
-                    print(matchid)
                     matchidlist.append(matchid)
                     combined , list = (obj.getMLData(match))
                     writer.writerow(combined)
+            #        time.sleep(30)
+            #    time.sleep(30)
         print(dbfile)
         pickle.dump(matchidlist,dbfile)
         f.close()

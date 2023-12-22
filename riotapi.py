@@ -80,6 +80,7 @@ class riot:
     @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def matchhistoryids(self,puuid = None):
         puuid = self.puuid
+        print("puuid in class:",puuid)
         region = self.getRegion(self.platform)
         #apicall = "https://{0}/lol/match/v5/matches/by-puuid/{1}/ids?api_key={2}".format(region,self.puuid,self.apikey)
         apicall = "https://{0}/lol/match/v5/matches/by-puuid/{1}/ids?api_key={2}".format(region,puuid,self.apikey)
@@ -90,12 +91,13 @@ class riot:
     @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def getmatchData(self,matchid):
         region = self.getRegion(self.platform)
-
         apicall = "https://{0}/lol/match/v5/matches/{1}?api_key={2}".format(region,matchid,self.apikey)    
         #print(apicall)
         request = requests.get(apicall)
         return request.json()
 
+    @sleep_and_retry
+    @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def getMLData(self,match):
         info = match["info"]
         players = info["participants"]
@@ -114,6 +116,7 @@ class riot:
     @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
 
 #The whole point of this is to 
+    @sleep_and_retry
     def getPuuid(self,platform,name="Symphony",tagline="NA1"):
         server = self.getRegion(platform)
         apicall = "https://{0}/riot/account/v1/accounts/by-riot-id/{1}/{2}?api_key={3}".format(server,name,tagline,self.apikey)
@@ -121,12 +124,14 @@ class riot:
         return request.json()
 
                 
+    @sleep_and_retry
     def changePlayer(self,platform,summonername):
         playerdata = self.getPuuid(platform,summonername)
         self.id = playerdata["id"]
         self.accountID = playerdata["accountId"]
         self.puuid = playerdata["puuid"]
 
+    @sleep_and_retry
     def __init__(self,summonername,platform,apikey,tagline):
         self.apikey = apikey
         playerdata = self.getPuuid(platform,summonername,tagline)
