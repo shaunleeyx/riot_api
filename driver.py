@@ -7,7 +7,7 @@ import time
 
 
 
-key = "RGAPI-9b8d5515-a570-43ba-8690-90ebe48f33e0"
+key = "RGAPI-f55102ca-c20d-4bca-a04d-c232f9b9ac67"
 summonername = input("Enter your summonername: ")
 hashtagindex = summonername.find('#')
 gamename = summonername[0:hashtagindex]
@@ -32,18 +32,21 @@ print(matchidlist)
 try:
     with open('data.csv','a',newline = "") as f,open('savefile','wb') as dbfile: #"r" represents the read mode
         writer = csv.writer(f, delimiter=',')
+        print("matchesid1:",matchesid)
         for matchid in matchesid:
             #time.sleep(30)
             match = obj.getmatchData(matchid)
+            print("matchidasdasdasd",match)
             if('info' not in match):
                 print("info:",match)
                 continue
             #if(not match["info"]): continue
             gameMode = match["info"]["gameMode"]
             if (gameMode != "ARAM" or (matchid in matchidlist)): continue
-            print("matchid1:",matchid)
+            #print("matchid1:",matchid)
             matchidlist.append(matchid)
             combined , list = (obj.getMLData(match))
+            print("puuidlist:",list)
             writer.writerow(combined)
             for puuid in list:
                 print("puuid in driver:",puuid)

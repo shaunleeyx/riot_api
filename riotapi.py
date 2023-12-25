@@ -9,7 +9,7 @@ from ratelimit import limits, sleep_and_retry,RateLimitException
 
 class riot:
     TIME_PERIOD = 120  # time period in seconds
-    MAX_CALLS_PER_TIME_PERIOD = 100
+    MAX_CALLS_PER_TIME_PERIOD = 80
 
     apikey = ""
     id = ""
@@ -18,6 +18,8 @@ class riot:
     platformhost = ""
     platform = ""
 
+    @sleep_and_retry
+    @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def getRegion(self,platform):
         AMERICAS = "americas.api.riotgames.com"
         ASIA = "asia.api.riotgames.com"
@@ -50,6 +52,8 @@ class riot:
                 platform = EUROPE
         return platform
         
+    @sleep_and_retry
+    @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def platformcheck(self,platform):
         match platform:
             case "BR1":
@@ -89,6 +93,7 @@ class riot:
     @sleep_and_retry
     @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def getmatchData(self,matchid):
+        print("getmatchdata:",matchid)
         region = self.getRegion(self.platform)
         apicall = "https://{0}/lol/match/v5/matches/{1}?api_key={2}".format(region,matchid,self.apikey)    
         #print(apicall)
@@ -111,11 +116,10 @@ class riot:
         row.append(teamwin)
         return row , puuid
     
-    @sleep_and_retry
-    @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
 
 #The whole point of this is to 
     @sleep_and_retry
+    @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def getPuuid(self,platform,name="Symphony",tagline="NA1"):
         server = self.getRegion(platform)
         apicall = "https://{0}/riot/account/v1/accounts/by-riot-id/{1}/{2}?api_key={3}".format(server,name,tagline,self.apikey)
@@ -124,6 +128,7 @@ class riot:
 
                 
     @sleep_and_retry
+    @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def changePlayer(self,platform,summonername):
         playerdata = self.getPuuid(platform,summonername)
         self.id = playerdata["id"]
@@ -131,6 +136,7 @@ class riot:
         self.puuid = playerdata["puuid"]
 
     @sleep_and_retry
+    @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def __init__(self,summonername,platform,apikey,tagline):
         self.apikey = apikey
         playerdata = self.getPuuid(platform,summonername,tagline)
