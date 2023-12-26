@@ -1,6 +1,10 @@
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError
+from urllib.error import URLError
 import requests
 import json
 from ratelimit import limits, sleep_and_retry,RateLimitException
+
     
 #server = "na1.api.riotgames.com"
 #region = "https://americas.api.riotgames.com"
@@ -84,6 +88,7 @@ class riot:
     @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def matchhistoryids(self,puuid):
         print("puuid in class:",puuid)
+
         region = self.getRegion(self.platform)
         #apicall = "https://{0}/lol/match/v5/matches/by-puuid/{1}/ids?api_key={2}".format(region,self.puuid,self.apikey)
         apicall = "https://{0}/lol/match/v5/matches/by-puuid/{1}/ids?api_key={2}".format(region,puuid,self.apikey)
@@ -93,7 +98,6 @@ class riot:
     @sleep_and_retry
     @limits(calls=MAX_CALLS_PER_TIME_PERIOD, period=TIME_PERIOD)
     def getmatchData(self,matchid):
-        print("getmatchdata:",matchid)
         region = self.getRegion(self.platform)
         apicall = "https://{0}/lol/match/v5/matches/{1}?api_key={2}".format(region,matchid,self.apikey)    
         #print(apicall)
@@ -140,6 +144,7 @@ class riot:
     def __init__(self,summonername,platform,apikey,tagline):
         self.apikey = apikey
         playerdata = self.getPuuid(platform,summonername,tagline)
+        print("playerdata:",playerdata)
         self.puuid = playerdata["puuid"]
         self.platform = platform
         self.platformhost = self.platformcheck(platform)

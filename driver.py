@@ -7,14 +7,13 @@ import time
 
 
 
-key = "RGAPI-f55102ca-c20d-4bca-a04d-c232f9b9ac67"
+key = "RGAPI-0143e05c-6d1d-4b3f-8c2c-35b67ce92b60"
 summonername = input("Enter your summonername: ")
 hashtagindex = summonername.find('#')
 gamename = summonername[0:hashtagindex]
 tagline = summonername[hashtagindex+1:len(summonername)]
 region = "NA"
 obj = riot(gamename,region,key,tagline)
-matchesid = obj.matchhistoryids(obj.puuid)
 delay = 0
 
 
@@ -26,46 +25,39 @@ if(not(os.path.exists("data.csv"))):
     writer.writerow(column_name)
     f.close()
 
+def printtoCSV(riot,write,picklefile,picklecurrent,puuid):
+    puuidlist = []
+    matchesid = riot.matchhistoryids(puuid)
+    for matchid in matchesid:
+        #time.sleep(30)
+        match = riot.getmatchData(matchid)
+        if('info' not in match):
+            print("info:",match)
+            continue
+        #if(not match["info"]): continue
+        gameMode = match["info"]["gameMode"]
+        if (gameMode != "ARAM" or (matchid in matchidlist)): continue
+        print("matchid1:",matchid)
+        picklefile.append(matchid)
+        combined , list =  (riot.getMLData(match))
+        #print("list in function",list)
+        write.writerow(combined)
+        pickle.dump(matchidlist,picklecurrent)
+        puuidlist += list
+    return puuidlist
+
+    
+
 path_to_file = "savefile"
 matchidlist = pickle.load(open('savefile', 'rb')) if(os.path.exists(path_to_file)) else []    
-print(matchidlist)
 try:
     with open('data.csv','a',newline = "") as f,open('savefile','wb') as dbfile: #"r" represents the read mode
         writer = csv.writer(f, delimiter=',')
-        print("matchesid1:",matchesid)
-        for matchid in matchesid:
-            #time.sleep(30)
-            match = obj.getmatchData(matchid)
-            print("matchidasdasdasd",match)
-            if('info' not in match):
-                print("info:",match)
-                continue
-            #if(not match["info"]): continue
-            gameMode = match["info"]["gameMode"]
-            if (gameMode != "ARAM" or (matchid in matchidlist)): continue
-            #print("matchid1:",matchid)
-            matchidlist.append(matchid)
-            combined , list = (obj.getMLData(match))
-            print("puuidlist:",list)
-            writer.writerow(combined)
-            for puuid in list:
-                print("puuid in driver:",puuid)
-                matchesid = obj.matchhistoryids(puuid)
-                for matchid in matchesid:
-                    match = obj.getmatchData(matchid)
-                    if('info' not in match):
-                        continue
-                    #if(not match["info"]): continue
-                    gameMode = match["info"]["gameMode"]
-                    if (gameMode != "ARAM" or (matchid in matchidlist)): continue
-                    print("matchid2:",matchid)
-                    matchidlist.append(matchid)
-                    combined , list = (obj.getMLData(match))
-                    writer.writerow(combined)
-            #        time.sleep(30)
-            #    time.sleep(30)
-        print(dbfile)
-        pickle.dump(matchidlist,dbfile)
+        list = printtoCSV(obj,writer,matchidlist,dbfile,obj.puuid)
+        for puuid in list:
+            printtoCSV(obj,writer,matchidlist,dbfile,puuid)
+        #        time.sleep(30)
+        #    time.sleep(30)
         f.close()
         dbfile.close()
 
