@@ -7,7 +7,7 @@ import time
 
 
 
-key = "RGAPI-b3551c79-631d-4a4a-b05d-41a0da8465f4"
+key = "RGAPI-ee9c71df-f827-485f-9fe1-c028d1fa4e3d"
 summonername = input("Enter your summonername: ")
 hashtagindex = summonername.find('#')
 gamename = summonername[0:hashtagindex]
